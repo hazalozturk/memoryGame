@@ -100,14 +100,16 @@ $(document).on('click', ".card", function() {
   let indx = $(this).attr("location");
   let card = deck.getCardByIndex(indx);
   card.open = true;
+  deck.renderCards();
   if (deck.guess !== null) {
     if (deck.guess.isMatched(card)) {
       deck.guess.open = true;
     } else {
+        deck.renderCards();
         deck.guess.open = false;
         card.open = false;
     }
+    setTimeout(function () {deck.renderCards();}, 700)
   }
   deck.setGuess(card);
-  deck.renderCards();
 });
