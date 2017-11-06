@@ -99,17 +99,41 @@ deck.renderCards();
 $(document).on('click', ".card", function() {
   let indx = $(this).attr("location");
   let card = deck.getCardByIndex(indx);
-  card.open = true;
-  deck.renderCards();
-  if (deck.guess !== null) {
-    if (deck.guess.isMatched(card)) {
-      deck.guess.open = true;
-    } else {
-        deck.renderCards();
-        deck.guess.open = false;
-        card.open = false;
+
+  if (card.isOpen()) {
+    console.log("it is already opened");
+  } else {
+    card.open = true;
+    deck.renderCards();
+    if (deck.guess !== null) {
+      if (deck.guess.isMatched(card)) {
+        deck.guess.open = true;
+      } else {
+          deck.renderCards();
+          deck.guess.open = false;
+          card.open = false;
+        }
+        setTimeout(function () {deck.renderCards();}, 700)
+      }
+      deck.setGuess(card);
+  };
+});
+
+//Restart Game
+$(".refresh").bind('click', function() {
+  swal({
+    allowEscapeKey: false,
+    allowOutsideClick: false,
+    title: 'Are You Sure?',
+    text: "Your progress will be LOST!",
+    type: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#00E4C9',
+    cancelButtonColor: '#fdec67',
+    confirmButtonText: 'Restart!'
+  }).then(function(isConfirm) {
+    if (isConfirm) {
+      location.reload();
     }
-    setTimeout(function () {deck.renderCards();}, 700)
-  }
-  deck.setGuess(card);
+  })
 });
