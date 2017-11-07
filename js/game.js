@@ -8,7 +8,7 @@ class Card {
   isOpen() {
     return this.open;
   }
-  getImage() {
+  getImage() {  //decides which face of the card to show (front or back)
     if (this.isOpen()) {
       return this.image;
     } else {
@@ -31,6 +31,7 @@ class Deck {
     this.cards = this.createCardArray();
     this.guess = null;
     this.moves = 0;
+    this.clicked = 0;
   }
 
   setGuess(card) {
@@ -68,9 +69,9 @@ class Deck {
     }
   }
 
+  shuffle(a) {
   //shuffle is taken from
   //https://stackoverflow.com/questions/6274339/how-can-i-shuffle-an-array
-  shuffle(a) {
     for (let i = a.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [a[i], a[j]] = [a[j], a[i]];
@@ -115,12 +116,16 @@ const deck = new Deck(panelImages);
 
 deck.render();
 
+//End Game
 $(document).on('change', ".panel", function() {
   if (deck.isEverythingOpen()) {
+    const now = new Date().getTime();
+    let elapsed = Math.floor((now - deck.start)/1000);
+    clearInterval(deck.timer);
     swal({
       icon: "success",
       title: "Congrats!",
-      text: `You finished the game with ${deck.moves} moves !!`,
+      text: `You finished the game with ${deck.moves} moves in ${elapsed} seconds!!`,
       showCancelButton: true,
       confirmButtonColor: '#00E4C9',
       cancelButtonColor: '#fdec67',
@@ -134,6 +139,17 @@ $(document).on('change', ".panel", function() {
 })
 
 $(document).on('click', ".card", function() {
+  deck.clicked = deck.clicked + 1;
+  if (deck.clicked === 1) {
+    const now = new Date().getTime(); //gets current time at first click
+    deck.start = now;
+    deck.timer = window.setInterval(function() { //creates a dynamic timer
+      let gameTime = new Date().getTime();
+      let diff = Math.floor((gameTime - now) / 1000);
+      $(".timer").text(`Timer: ${diff}`);
+    }, 1000);
+  };
+
   let indx = $(this).attr("location");
   let card = deck.getCardByIndex(indx);
 
@@ -149,6 +165,7 @@ $(document).on('click', ".card", function() {
           deck.guess.open = false;
           card.open = false;
           deck.moves += 1;
+          $(".moves").text(`You have made ${deck.moves} moves`);
         }
         setTimeout(function () {deck.render();}, 700)
       }
