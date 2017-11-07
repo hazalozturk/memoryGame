@@ -30,6 +30,7 @@ class Deck {
     this.array = array;
     this.cards = this.createCardArray();
     this.guess = null;
+    this.moves = 0;
   }
 
   setGuess(card) {
@@ -42,15 +43,28 @@ class Deck {
 
   clean() {
     $(".panel").empty();
+    $(".stars").empty();
   }
 
-  renderCards() {
+  render() {
     this.clean();
     for (let i=0; i<this.cards.length; i++) {
       let card = this.cards[i];
       let img = card.getImage();
       let listItem = `<li class="card" location="${i}"><img src="${img}" alt="back of deck"></li>`;
       $(".panel").append(listItem);
+    }
+
+    //Star Rating based on Click count
+    let star =  '<i class="fa fa-star fa-2x" aria-hidden="true"></i>'
+    let emptyStar = '<i class="fa fa-star-o fa-2x" aria-hidden="true"></i>'
+
+    if (this.moves >= 10 && this.moves < 15) {
+      $(".stars").append(star).append(star).append(emptyStar);
+    } else if (this.moves >= 15) {
+      $(".stars").append(star).append(emptyStar).append(emptyStar);
+    } else {
+      $(".stars").append(star).append(star).append(star);
     }
   }
 
@@ -77,6 +91,11 @@ class Deck {
   getCardByIndex(indx) {
     return this.cards[indx];
   }
+
+  isEverythingOpen() {
+    return this.cards.every(function(element) {
+      return element.isOpen()});
+  }
 }
 
 const imgs =
@@ -93,27 +112,45 @@ const imgs =
 
 let panelImages = imgs.concat(imgs);
 const deck = new Deck(panelImages);
-deck.renderCards();
 
+deck.render();
+
+$(document).on('change', ".panel", function() {
+  if (deck.isEverythingOpen()) {
+    swal({
+      icon: "success",
+      title: "Congrats!",
+      text: `You finished the game with ${deck.moves} moves !!`,
+      showCancelButton: true,
+      confirmButtonColor: '#00E4C9',
+      cancelButtonColor: '#fdec67',
+      confirmButtonText: 'Restart!'
+    }).then(function(isConfirm) {
+      if (isConfirm) {
+        location.reload();
+      }
+    })
+  };
+})
 
 $(document).on('click', ".card", function() {
   let indx = $(this).attr("location");
   let card = deck.getCardByIndex(indx);
 
-  if (card.isOpen()) {
-    console.log("it is already opened");
-  } else {
+  if (!card.isOpen()) {
     card.open = true;
-    deck.renderCards();
+    deck.render();
     if (deck.guess !== null) {
       if (deck.guess.isMatched(card)) {
         deck.guess.open = true;
+        $(".panel").trigger('change');
       } else {
-          deck.renderCards();
+          deck.render();
           deck.guess.open = false;
           card.open = false;
+          deck.moves += 1;
         }
-        setTimeout(function () {deck.renderCards();}, 700)
+        setTimeout(function () {deck.render();}, 700)
       }
       deck.setGuess(card);
   };
