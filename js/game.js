@@ -57,8 +57,8 @@ class Deck {
     }
 
     //Star Rating based on Click count
-    let star =  '<i class="fa fa-star fa-2x" aria-hidden="true"></i>'
-    let emptyStar = '<i class="fa fa-star-o fa-2x" aria-hidden="true"></i>'
+    let star =  '<i class="fa fa-star fa-3x" aria-hidden="true"></i>'
+    let emptyStar = '<i class="fa fa-star-o fa-3x" aria-hidden="true"></i>'
 
     if (this.moves >= 10 && this.moves < 15) {
       $(".stars").append(star).append(star).append(emptyStar);
@@ -101,14 +101,14 @@ class Deck {
 
 const imgs =
   [
-    'images/1.jpg',
-    'images/2.jpg',
-    'images/3.jpg',
-    'images/4.jpg',
-    'images/5.jpg',
-    'images/6.jpg',
-    'images/7.jpg',
-    'images/8.jpg',
+    'images/1.png',
+    'images/2.png',
+    'images/3.png',
+    'images/4.png',
+    'images/5.png',
+    'images/6.png',
+    'images/7.png',
+    'images/8.png',
   ]
 
 let panelImages = imgs.concat(imgs);
