@@ -122,10 +122,11 @@ $(document).on('change', ".panel", function() {
     const now = new Date().getTime();
     let elapsed = Math.floor((now - deck.start)/1000);
     clearInterval(deck.timer);
+    let stars = $(".stars")
     swal({
       icon: "success",
       title: "Congrats!",
-      text: `You finished the game with ${deck.moves} moves in ${elapsed} seconds!!`,
+      text: `You finished the game with ${deck.moves} moves in ${elapsed} seconds!! ${stars.html()}`,
       showCancelButton: true,
       confirmButtonColor: '#00E4C9',
       cancelButtonColor: '#fdec67',
