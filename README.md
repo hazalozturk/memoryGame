@@ -2,8 +2,11 @@
 
 This game was built as a UDACITY FEND Course project. The purpose of the project is o demonstrate mastery of HTML, CSS and JS.
 
-## How to Run:
-CLone the **[repo] (https://github.com/hazalozturk/memoryGame.git)** and open index.html
+## How to Load the Game:
+CLone the repo: **(https://github.com/hazalozturk/memoryGame.git)**  
+Open index.html
+  OR
+Play [here](https://hazalozturk.github.io/memoryGame/)
 
 ## How to Play:
 Game has 8 pairs of cards
