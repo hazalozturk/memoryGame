@@ -42,24 +42,35 @@ class Deck {
     }
   }
 
-  clean() {
+  clean() { //clears panel in the beginning and to restart
     $(".panel").empty();
     $(".stars").empty();
   }
 
-  render() {
-    this.clean();
-    for (let i=0; i<this.cards.length; i++) {
-      let card = this.cards[i];
-      let img = card.getImage();
-      let listItem = `<li class="card" location="${i}"><img src="${img}" alt="back of deck"></li>`;
-      $(".panel").append(listItem);
+  createGrid() {
+    let location = 0;
+    for(var i=0; i<4; i++) { //row
+      $(".panel").append(`<div class="row" id="row_${i}"></div>`);
+      for(var j=0; j<4; j++) {  //col
+        let card = this.cards[location];
+        let img = card.getImage();
+        let responsiveImage = `<div class="imgContainer"><img class="card img-responsive" src="${img}" alt="back of deck" location="${location}"></div>`
+        let column = `<div class="col-md-3 col-xs-3 col-lg-3 col-sm-3">${responsiveImage}</div>`
+        $(`#row_${i}`).append(column);
+        location += 1;
+      }
     }
+  }
 
-    //Star Rating based on Click count
+  render() {
+    //constructs the game panel with rendering the cards
+    this.clean();
+    this.createGrid();
+
     let star =  '<i class="fa fa-star fa-3x" aria-hidden="true"></i>'
     let emptyStar = '<i class="fa fa-star-o fa-3x" aria-hidden="true"></i>'
 
+    //decides star rating based on the number of moves the player has made
     if (this.moves >= 10 && this.moves < 15) {
       $(".stars").append(star).append(star).append(emptyStar);
     } else if (this.moves >= 15) {
@@ -100,6 +111,7 @@ class Deck {
 }
 
 const imgs =
+//fixed card images
   [
     'images/1.png',
     'images/2.png',
@@ -111,7 +123,7 @@ const imgs =
     'images/8.png',
   ]
 
-let panelImages = imgs.concat(imgs);
+let panelImages = imgs.concat(imgs); //creates 8 pairs of cards with fixed card images
 const deck = new Deck(panelImages);
 
 deck.render();
@@ -119,8 +131,8 @@ deck.render();
 //End Game
 $(document).on('change', ".panel", function() {
   if (deck.isEverythingOpen()) {
-    const now = new Date().getTime();
-    let elapsed = Math.floor((now - deck.start)/1000);
+    const now = new Date().getTime(); //gives time when all the cards are matched
+    let elapsed = Math.floor((now - deck.start)/1000); //calculates elapsed time by substracting starting time from finishing time
     clearInterval(deck.timer);
     let stars = $(".stars")
     swal({
@@ -133,7 +145,7 @@ $(document).on('change', ".panel", function() {
       confirmButtonText: 'Restart!'
     }).then(function(isConfirm) {
       if (isConfirm) {
-        location.reload();
+        location.reload(); //refresh function
       }
     })
   };
@@ -142,6 +154,7 @@ $(document).on('change', ".panel", function() {
 $(document).on('click', ".card", function() {
   deck.clicked = deck.clicked + 1;
   if (deck.clicked === 1) {
+    //counts clicks to start timer and to give the number of moves in the end
     const now = new Date().getTime(); //gets current time at first click
     deck.start = now;
     deck.timer = window.setInterval(function() { //creates a dynamic timer
@@ -159,9 +172,11 @@ $(document).on('click', ".card", function() {
     deck.render();
     if (deck.guess !== null) {
       if (deck.guess.isMatched(card)) {
+        //checks if the cards are matched
         deck.guess.open = true;
         $(".panel").trigger('change');
       } else {
+        //checks if the cards are not matched and counts moves based on the false guesses
           deck.render();
           deck.guess.open = false;
           card.open = false;
@@ -188,7 +203,7 @@ $(".refresh").bind('click', function() {
     confirmButtonText: 'Restart!'
   }).then(function(isConfirm) {
     if (isConfirm) {
-      location.reload();
+      location.reload(); //refreshes the game when clicking restart button
     }
   })
 });
